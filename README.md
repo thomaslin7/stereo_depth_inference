@@ -157,22 +157,3 @@ The system automatically calculates and displays:
  [ 0.48656555]
  [ 0.28951812]]
 ```
-
-## Troubleshooting
-
-**Camera Issues:**
-- Black windows: Verify camera indices and check camera permissions
-- Cameras not found: Ensure cameras are connected and not used by other applications
-- On macOS: Grant Terminal/IDE camera access in System Settings > Privacy & Security > Camera
-
-**Calibration Issues:**
-- Poor calibration: Ensure chessboard is flat, well-lit, and covers diverse poses
-- Not enough images: Capture at least 20-30 good image pairs
-- Wrong image count: Update the range in `stereo_vision.py` to match your saved images
-
-**Performance Issues:**
-- Low FPS: Reduce camera resolution or window size
-- Missing WLS filter: Ensure `opencv-contrib-python` is installed
-
-## License
-See `LICENSE.md` for license information.
