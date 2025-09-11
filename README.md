@@ -1,15 +1,13 @@
 # Stereo Depth Inference System
 
 ## Overview
-This repository provides a complete stereo vision system for depth estimation using two USB webcams. The system includes camera streaming, calibration image capture, stereo calibration, and real-time depth inference with point cloud generation capabilities.
+This repository provides a complete stereo vision system for depth estimation using two USB webcams. The system includes camera streaming, calibration image capture, stereo calibration, and real-time depth inference.
 
 ## Features
 - **Dual Camera Streaming**: Test and preview both cameras simultaneously
 - **Calibration Image Capture**: Collect synchronized chessboard pairs for stereo calibration
 - **Stereo Calibration**: Automatic camera intrinsic and extrinsic parameter estimation
 - **Real-time Depth Estimation**: Live disparity mapping with WLS filtering
-- **Point Cloud Generation**: Export 3D point clouds in PLY format
-- **Camera Parameter Display**: Print intrinsic and extrinsic matrices for analysis
 
 ## Requirements
 - Python 3.9+ recommended
@@ -127,10 +125,6 @@ python stereo_vision.py
    - Applies WLS filtering for improved quality
    - Displays colorized disparity map
 
-**Controls:**
-- `q`: Quit the program
-- `s`: Save current point cloud (currently commented out - uncomment lines 335-342 to enable)
-
 **Configuration:**
 - **Image count range:** Edit line 124 to match your saved image pairs:
   ```python
@@ -162,19 +156,6 @@ The system automatically calculates and displays:
 [[-4.62415749]
  [ 0.48656555]
  [ 0.28951812]]
-```
-
-## Point Cloud Generation
-
-The system includes functions for generating and saving 3D point clouds:
-
-- `create_point_cloud()`: Converts disparity map to 3D point cloud
-- `save_point_cloud()`: Saves point cloud to PLY format with timestamp
-
-**Example usage:**
-```python
-# Save point cloud (uncomment in stereo_vision.py)
-save_point_cloud(disp, Q, Left_nice)
 ```
 
 ## Troubleshooting
