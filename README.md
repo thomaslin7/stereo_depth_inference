@@ -68,7 +68,7 @@ python video_stream.py
 
 **Features:**
 - Displays live feed from both cameras in separate windows
-- Press `q` to quit (currently commented out - uncomment lines 17-22 to enable)
+- Press `q` to quit
 
 ### 2. Calibration Image Capture
 **Script:** `calibration_image_capture.py`
