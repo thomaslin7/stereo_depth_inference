@@ -1,130 +1,197 @@
-# Stereo Vision — Streaming, Calibration Image Capture, and Depth Inference
+# Stereo Depth Inference System
 
 ## Overview
-This repository provides three workflows for working with a stereo camera pair (two USB webcams):
-- Camera streaming test: preview both cameras and optionally save quick snapshots
-- Capture calibration images: collect synchronized chessboard pairs for calibration
-- Stereo depth inference: run calibration from images and visualize filtered disparity maps
+This repository provides a complete stereo vision system for depth estimation using two USB webcams. The system includes camera streaming, calibration image capture, stereo calibration, and real-time depth inference with point cloud generation capabilities.
 
-Tested on macOS. Should also work on Linux/Windows with minor adjustments to camera indices.
+## Features
+- **Dual Camera Streaming**: Test and preview both cameras simultaneously
+- **Calibration Image Capture**: Collect synchronized chessboard pairs for stereo calibration
+- **Stereo Calibration**: Automatic camera intrinsic and extrinsic parameter estimation
+- **Real-time Depth Estimation**: Live disparity mapping with WLS filtering
+- **Point Cloud Generation**: Export 3D point clouds in PLY format
+- **Camera Parameter Display**: Print intrinsic and extrinsic matrices for analysis
 
 ## Requirements
 - Python 3.9+ recommended
 - Two USB cameras connected and accessible as indices `0` and `1`
 - Permissions to access cameras (on macOS, grant Terminal/IDE camera access in System Settings)
 
-### Python dependencies
-Install in a virtual environment if possible.
+### Python Dependencies
+Install in a virtual environment:
 
 ```bash
 python3 -m venv .venv
-source .venv/bin/activate
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 pip install --upgrade pip
-pip install numpy opencv-python opencv-contrib-python imutils openpyxl scikit-learn
+pip install -r requirements.txt
 ```
 
-Notes:
-- `opencv-contrib-python` is required for `cv2.ximgproc` (WLS disparity filter) used in stereo depth.
-- If you already have `opencv-python` installed, ensure versions are compatible; prefer only `opencv-contrib-python`.
+**Key Dependencies:**
+- `opencv-python>=4.5.0` - Core computer vision functionality
+- `opencv-contrib-python` - Required for `cv2.ximgproc` (WLS disparity filter)
+- `numpy>=1.19.0` - Numerical computations
+- `open3d>=0.13.0` - 3D point cloud processing
+- `imutils>=0.5.0` - Video stream utilities
+- `openpyxl>=3.0.0` - Excel data export
+- `scikit-learn>=0.24.0` - Data preprocessing
 
-## Repository structure
-- `logitech_camera.py`: lightweight two-camera streaming and snapshot tool (save with `c`)
-- `Take_images_for_calibration.py`: acquire synchronized chessboard pairs and save to `calibration_images/`
-- `stereo_vision.py`: performs stereo calibration from saved images and visualizes a filtered disparity map
-- `calibration_images/`: default folder for saved chessboard images (already included)
-- `9x6chessboard.png`: printable 9×6 inner-corner chessboard for calibration
+## Repository Structure
+```
+├── video_stream.py              # Basic dual camera streaming test
+├── calibration_image_capture.py # Capture chessboard calibration images
+├── stereo_vision.py            # Main stereo depth inference system
+├── calibration_images/         # Directory for saved chessboard images
+├── 9x6chessboard.png          # Printable 9×6 inner-corner chessboard
+├── requirements.txt           # Python dependencies
+└── README.md                 # This file
+```
 
-## Camera index assumptions
-All scripts assume two cameras at indices `src=0` (Right) and `src=1` (Left). If your cameras appear swapped or not found:
+## Camera Configuration
+All scripts assume two cameras at indices:
+- `src=0` (Right camera)
+- `src=1` (Left camera)
+
+If your cameras appear swapped or not found:
 - Swap USB ports, or
-- Edit the `VideoStream(src=...)` indices inside the scripts accordingly.
+- Edit the `VideoStream(src=...)` indices in the scripts
 
 ---
 
-## 1) Camera streaming test
-Script: `logitech_camera.py`
+## Usage Guide
 
-What it does:
-- Opens both cameras and displays two windows: `frame1` (src=0) and `frame2` (src=1)
-- Keyboard controls:
-  - `q`: quit
-  - `c`: save a snapshot from each camera to the project root as `calibrate01_<timestamp>.png` and `calibrate02_<timestamp>.png`
+### 1. Camera Streaming Test
+**Script:** `video_stream.py`
 
-Run:
+Test basic camera functionality and verify both cameras are working.
+
 ```bash
-python logitech_camera.py
+python video_stream.py
 ```
 
-Troubleshooting:
-- If a window is black, verify camera indices and that no other app is using the camera.
-- On macOS, ensure Terminal/IDE has Camera permission.
+**Features:**
+- Displays live feed from both cameras in separate windows
+- Press `q` to quit (currently commented out - uncomment lines 17-22 to enable)
 
----
+### 2. Calibration Image Capture
+**Script:** `calibration_image_capture.py`
 
-## 2) Capture calibration images
-Script: `Take_images_for_calibration.py`
+Capture synchronized chessboard image pairs for stereo calibration.
 
-What it does:
-- Continuously reads both cameras and attempts to detect a 9×6 inner-corner chessboard in each stream
-- Shows raw frames in `imgR`/`imgL` and grayscale detections in `VideoR`/`VideoL` when corners are found
-- Keyboard controls when corners are detected:
-  - `s`: save the current stereo pair to `calibration_images/` as `chessboard-R<ID>.png` and `chessboard-L<ID>.png`
-  - Any other key: skip and continue
-- Global quit:
-  - `q`: quit the program
+```bash
+python calibration_image_capture.py
+```
 
-Before you start:
+**Controls:**
+- `s`: Save current stereo pair when chessboard is detected
+- `q`: Quit the program
+- Any other key: Skip current frame and continue
+
+**Before Starting:**
 - Print or display the provided `9x6chessboard.png` with flat mounting
 - Ensure good, uniform lighting and minimal glare
-- Move the chessboard around the scene and vary orientation/depth to capture robust calibration sets
+- Move the chessboard around the scene and vary orientation/depth
 
-Run:
-```bash
-python Take_images_for_calibration.py
-```
+**Tips:**
+- Aim for 20-60 good pairs covering diverse poses
+- Keep the chessboard fully visible in both cameras and in focus
+- The inner-corner grid is 9×6 (not square count)
 
-Tips:
-- Aim for 20–60 good pairs covering diverse poses.
-- Keep the chessboard fully visible in both cameras and in focus.
-- The inner-corner grid is 9×6; do not confuse with square count.
+**Saved Files:**
+- `calibration_images/chessboard-R0.png`, `calibration_images/chessboard-L0.png`
+- `calibration_images/chessboard-R1.png`, `calibration_images/chessboard-L1.png`
+- etc.
 
-Saved files example:
-- `calibration_images/chessboard-R0.png`
-- `calibration_images/chessboard-L0.png`
+### 3. Stereo Depth Inference
+**Script:** `stereo_vision.py`
 
----
+Main stereo vision system that performs calibration and real-time depth estimation.
 
-## 3) Stereo depth inference (calibrate + disparity)
-Script: `stereo_vision.py`
-
-What it does:
-- Loads saved chessboard image pairs from `calibration_images/`
-- Detects corners and runs mono calibration for each camera
-- Runs stereo calibration and rectification
-- Streams from both cameras, rectifies frames, computes disparity using StereoSGBM, filters with WLS, and displays a colorized filtered disparity map window: `Filtered Color Depth`
-- Double-clicking the disparity window prints an approximate distance estimate at the clicked pixel (empirical model)
-
-Important configuration inside `stereo_vision.py`:
-- Image count range for calibration:
-  - Edit this line to match the number of image pairs you actually saved:
-    ```python
-    for i in range(0, 52):
-    ```
-    If you saved N pairs, change to `range(0, N)`.
-- Chessboard size is fixed at 9×6 inner corners.
-- Camera indices: `VideoStream(src=0)` and `VideoStream(src=1)`; adjust if needed.
-- Exposure/white balance: the script disables auto exposure/WB and sets manual exposure to `-6`. Tweak values or comment lines if your cameras behave differently.
-
-Run:
 ```bash
 python stereo_vision.py
 ```
 
-Controls:
-- Disparity window `Filtered Color Depth`:
-  - Double-click: print estimated distance at clicked pixel
-  - `q`: quit
+**What it does:**
+1. **Calibration Phase:**
+   - Loads saved chessboard image pairs from `calibration_images/`
+   - Performs individual camera calibration (intrinsic parameters)
+   - Performs stereo calibration (extrinsic parameters)
+   - **Prints camera matrices:**
+     - Intrinsic Matrix (Left Camera)
+     - Extrinsic Matrix - Rotation Matrix (R)
+     - Extrinsic Matrix - Translation Vector (T)
 
-Performance tips:
-- Reduce window size or camera resolution for higher FPS (requires editing capture settings or resizing frames).
-- Ensure you installed `opencv-contrib-python` for `cv2.ximgproc` support.
+2. **Real-time Depth Estimation:**
+   - Streams from both cameras
+   - Rectifies frames using calibration parameters
+   - Computes disparity using StereoSGBM algorithm
+   - Applies WLS filtering for improved quality
+   - Displays colorized disparity map
+
+**Controls:**
+- `q`: Quit the program
+- `s`: Save current point cloud (currently commented out - uncomment lines 335-342 to enable)
+
+**Configuration:**
+- **Image count range:** Edit line 124 to match your saved image pairs:
+  ```python
+  for i in range(0, 61):  # Change 61 to your actual number of pairs
+  ```
+- **Chessboard size:** Fixed at 9×6 inner corners
+- **Camera exposure:** Manual exposure set to -6 (adjust if needed)
+
+## Camera Parameters
+
+The system automatically calculates and displays:
+
+**Intrinsic Matrix (Left Camera):**
+```
+[[1.41967223e+03 0.00000000e+00 6.75644308e+02]
+ [0.00000000e+00 1.41948573e+03 5.02151893e+02]
+ [0.00000000e+00 0.00000000e+00 1.00000000e+00]]
+```
+
+**Extrinsic Matrix - Rotation Matrix (R):**
+```
+[[ 0.99813405  0.05114941  0.03334891]
+ [-0.04978794  0.9979403  -0.04045151]
+ [-0.03534929  0.03871566  0.99862482]]
+```
+
+**Extrinsic Matrix - Translation Vector (T):**
+```
+[[-4.62415749]
+ [ 0.48656555]
+ [ 0.28951812]]
+```
+
+## Point Cloud Generation
+
+The system includes functions for generating and saving 3D point clouds:
+
+- `create_point_cloud()`: Converts disparity map to 3D point cloud
+- `save_point_cloud()`: Saves point cloud to PLY format with timestamp
+
+**Example usage:**
+```python
+# Save point cloud (uncomment in stereo_vision.py)
+save_point_cloud(disp, Q, Left_nice)
+```
+
+## Troubleshooting
+
+**Camera Issues:**
+- Black windows: Verify camera indices and check camera permissions
+- Cameras not found: Ensure cameras are connected and not used by other applications
+- On macOS: Grant Terminal/IDE camera access in System Settings > Privacy & Security > Camera
+
+**Calibration Issues:**
+- Poor calibration: Ensure chessboard is flat, well-lit, and covers diverse poses
+- Not enough images: Capture at least 20-30 good image pairs
+- Wrong image count: Update the range in `stereo_vision.py` to match your saved images
+
+**Performance Issues:**
+- Low FPS: Reduce camera resolution or window size
+- Missing WLS filter: Ensure `opencv-contrib-python` is installed
+
+## License
+See `LICENSE.md` for license information.
