@@ -38,6 +38,7 @@ pip install -r requirements.txt
 ├── calibration_image_capture.py # Capture chessboard calibration images
 ├── stereo_vision.py            # Main stereo depth inference system
 ├── calibration_images/         # Directory for saved chessboard images
+├── image_pairs/               # Directory for general stereo image pairs
 ├── 9x6chessboard.png          # Printable 9×6 inner-corner chessboard
 ├── requirements.txt           # Python dependencies
 └── README.md                 # This file
