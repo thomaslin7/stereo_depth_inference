@@ -25,7 +25,6 @@ pip install -r requirements.txt
 ```
 
 **Key Dependencies:**
-- `opencv-python>=4.5.0` - Core computer vision functionality
 - `opencv-contrib-python` - Required for `cv2.ximgproc` (WLS disparity filter)
 - `numpy>=1.19.0` - Numerical computations
 - `open3d>=0.13.0` - 3D point cloud processing
@@ -114,7 +113,7 @@ python stereo_vision.py
    - Performs individual camera calibration (intrinsic parameters)
    - Performs stereo calibration (extrinsic parameters)
    - **Prints camera matrices:**
-     - Intrinsic Matrix (Left Camera)
+     - Intrinsic Matrix
      - Extrinsic Matrix - Rotation Matrix (R)
      - Extrinsic Matrix - Translation Vector (T)
 
@@ -137,7 +136,7 @@ python stereo_vision.py
 
 The system automatically calculates and displays:
 
-**Intrinsic Matrix (Left Camera):**
+**Intrinsic Matrix:**
 ```
 [[1.41967223e+03 0.00000000e+00 6.75644308e+02]
  [0.00000000e+00 1.41948573e+03 5.02151893e+02]
