@@ -128,7 +128,7 @@ python stereo_vision.py
 **Configuration:**
 - **Image count range:** Edit the number to match your saved image pairs:
   ```python
-  for i in range(0, 61):  # Change 61 to your actual number of pairs
+  for i in range(0, 50):  # Change 50 to your actual number of pairs
   ```
 - **Chessboard size:** Fixed at 9×6 inner corners
 - **Camera exposure:** Manual exposure set to -6 (adjust if needed)
