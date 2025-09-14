@@ -6,7 +6,7 @@ import time
 print('Starting the Calibration. Press and maintain the space bar to exit the script\n')
 print('Push (s) to save the image you want and push (c) to see next frame without saving the image')
 
-id_image=33 # change this back to 0 (if calibration image count is 0)
+id_image=0 # change this back to 0 (if calibration image count is 0)
 
 # termination criteria
 criteria =(cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
