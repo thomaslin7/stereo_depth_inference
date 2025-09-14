@@ -121,7 +121,7 @@ imgpointsL= []
 # Start calibration from the camera
 print('Starting calibration for the 2 cameras... ')
 # Call all saved images
-for i in range(0,60):   # Put the number of pictures you have taken for the calibration in range(0,?), starting from the image number 0
+for i in range(0,50):   # Put the number of pictures you have taken for the calibration in range(0,?), starting from the image number 0
     t= str(i)
     ChessImaR= cv2.imread('calibration_images/chessboard-R'+t+'.png',0)    # Right side
     ChessImaL= cv2.imread('calibration_images/chessboard-L'+t+'.png',0)    # Left side
@@ -192,19 +192,19 @@ print(T)
 ###################
 
 # Intrinsic Matrix:
-# [[1.41967223e+03 0.00000000e+00 6.75644308e+02]
-#  [0.00000000e+00 1.41948573e+03 5.02151893e+02]
+# [[1.42945992e+03 0.00000000e+00 6.83046151e+02]
+#  [0.00000000e+00 1.42434397e+03 4.81538797e+02]
 #  [0.00000000e+00 0.00000000e+00 1.00000000e+00]]
 
 # Extrinsic Matrix - Rotation Matrix (R):
-# [[ 0.99813405  0.05114941  0.03334891]
-#  [-0.04978794  0.9979403  -0.04045151]
-#  [-0.03534929  0.03871566  0.99862482]]
+# [[ 0.99795576 -0.0120479  -0.06276256]
+#  [ 0.01112565  0.99982525 -0.01502309]
+#  [ 0.06293259  0.01429411  0.99791541]]
 
 # Extrinsic Matrix - Translation Vector (T):
-# [[-4.62415749]
-#  [ 0.48656555]
-#  [ 0.28951812]]
+# [[-3.2806174 ]
+#  [ 0.03283476]
+#  [-0.15686016]]
 
  ###################
 
@@ -352,8 +352,7 @@ while True:
     #     for v in range (-1,2):
     #         average += disp[y+u,x+v]
     # average=average/9
-    # # Distance= -593.97*average**(3) + 1506.8*average**(2) - 1373.1*average + 522.06
-    # Distance= -593.97*average**(3) + 1506.8*average**(2) - 1373.1*average + 70.06
+    # Distance= -593.97*average**(3) + 1506.8*average**(2) - 1373.1*average + 522.06
     # Distance= np.around(Distance*0.01,decimals=2)
     # print('Distance: '+ str(Distance)+' m')
     
